@@ -63,11 +63,11 @@ public class PartPanel extends JPanel {
         form.setPreferredSize(new Dimension(380, 0));
 
         JPanel fields = new JPanel(new GridLayout(0, 2, 8, 8));
-        fields.add(new JLabel("Nom piece"));
+        fields.add(new JLabel("Nom de pièce"));
         fields.add(nameField);
-        fields.add(new JLabel("Cout"));
+        fields.add(new JLabel("Coût"));
         fields.add(costField);
-        fields.add(new JLabel("Quantite"));
+        fields.add(new JLabel("Quantité"));
         fields.add(quantityField);
         fields.add(new JLabel("Date"));
         fields.add(dateField);
@@ -150,7 +150,7 @@ public class PartPanel extends JPanel {
             Part part = new Part(
                     selectedPart == null ? null : selectedPart.id(),
                     product.id(),
-                    require(nameField.getText(), "Nom de piece obligatoire"),
+                    require(nameField.getText(), "Nom de pièce obligatoire"),
                     textArea.getText().trim(),
                     toMoney(costField.getValue()),
                     toInt(quantityField.getValue(), 1),
@@ -173,10 +173,10 @@ public class PartPanel extends JPanel {
 
     private void deleteSelected() {
         if (selectedPart == null) {
-            DialogUtil.showError(this, "Selectionnez une piece");
+            DialogUtil.showError(this, "Sélectionnez une pièce");
             return;
         }
-        if (DialogUtil.confirm(this, "Supprimer cette piece ?")) {
+        if (DialogUtil.confirm(this, "Supprimer cette pièce ?")) {
             partRepository.delete(selectedPart.id());
             updateProductPartsCost(getSelectedProduct().id());
             clearForm();
@@ -233,7 +233,7 @@ public class PartPanel extends JPanel {
             }
             return new BigDecimal(String.valueOf(value).trim()).setScale(2, java.math.RoundingMode.HALF_UP);
         } catch (Exception ex) {
-            throw new IllegalArgumentException("Cout invalide");
+            throw new IllegalArgumentException("Coût invalide");
         }
     }
 
@@ -249,7 +249,7 @@ public class PartPanel extends JPanel {
     }
 
     private static final class PartTableModel extends AbstractTableModel {
-        private final String[] columns = {"ID", "Nom", "Cout", "Qt", "Date", "Statut"};
+        private final String[] columns = {"ID", "Nom", "Coût", "Qté", "Date", "Statut"};
         private List<Part> rows = List.of();
 
         void setRows(List<Part> rows) {

@@ -69,10 +69,10 @@ public class DashboardPanel extends JPanel {
     private ChartPanel buildFinancialChart() {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         ProductRepository.FinancialSummary summary = productRepository.summarizeFinancials().get(0);
-        dataset.addValue(summary.totalCost().doubleValue(), "Couts", "Total");
+        dataset.addValue(summary.totalCost().doubleValue(), "Coûts", "Total");
         dataset.addValue(summary.totalRevenue().doubleValue(), "Ventes", "Total");
 
-        JFreeChart chart = ChartFactory.createBarChart("Couts et ventes", "Type", "Montant", dataset);
+        JFreeChart chart = ChartFactory.createBarChart("Coûts et ventes", "Type", "Montant", dataset);
         CategoryPlot plot = chart.getCategoryPlot();
         plot.setBackgroundPaint(new Color(45, 45, 45));
         plot.setRangeGridlinePaint(new Color(120, 120, 120));

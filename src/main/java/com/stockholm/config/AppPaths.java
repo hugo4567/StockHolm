@@ -24,4 +24,12 @@ public final class AppPaths {
     public static Path resolveDatabaseFile() {
         return resolveApplicationDirectory().resolve("stockholm.db");
     }
+
+    public static Path resolveBannerFile() {
+        Path applicationBanner = resolveApplicationDirectory().resolve("banniere.jpg");
+        if (java.nio.file.Files.isRegularFile(applicationBanner)) {
+            return applicationBanner;
+        }
+        return Paths.get(System.getProperty("user.dir")).toAbsolutePath().normalize().resolve("banniere.jpg");
+    }
 }

@@ -32,3 +32,37 @@ application {
 tasks.test {
     useJUnitPlatform()
 }
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+tasks.processResources {
+    from(layout.projectDirectory.file('banniere.jpg'))
+}
+
+def windowsAppDirectory = layout.buildDirectory.dir('jpackage/StockHolm').get().asFile
+
+tasks.register('packageWindows', Exec) {
+    group = 'distribution'
+    description = 'Build a portable Windows application containing StockHolm.exe'
+    dependsOn tasks.installDist
+
+    doFirst {
+        delete windowsAppDirectory
+        windowsAppDirectory.parentFile.mkdirs()
+    }
+
+    commandLine(
+            'jpackage',
+            '--type', 'app-image',
+            '--name', 'StockHolm',
+            '--app-version', project.version.toString(),
+            '--input', layout.buildDirectory.dir('install/stockholm/lib').get().asFile.absolutePath,
+            '--main-jar', "stockholm-${project.version}.jar",
+            '--main-class', application.mainClass.get(),
+            '--dest', windowsAppDirectory.parentFile.absolutePath,
+            '--vendor', 'StockHolm',
+            '--description', 'Gestion de produits et de pieces detachees'
+    )
+}

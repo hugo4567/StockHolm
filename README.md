@@ -1,6 +1,6 @@
 # StockHolm
 
-Application Java desktop Swing avec base SQLite locale pour suivre des produits et leurs pieces detachees.
+Application Java desktop Swing avec base SQLite locale pour suivre des produits et leurs pieces detachees. idéale pour gerer de l'achat / revente de produits sur vinted avec réparations.
 
 ## Fonctionnalites
 
@@ -15,9 +15,14 @@ Application Java desktop Swing avec base SQLite locale pour suivre des produits 
 gradle test
 gradle run
 gradle build
+gradle packageWindows
 ```
 
 La base est enregistree dans le meme dossier que l'application lancee, sous le nom `stockholm.db`.
+
+`gradle packageWindows` genere une application Windows autonome dans
+`build/jpackage/StockHolm/`. Le fichier executable est
+`build/jpackage/StockHolm/StockHolm.exe`, avec son runtime Java inclus.
 
 ## Champs produit
 

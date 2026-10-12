@@ -93,7 +93,7 @@ public class ProductPanel extends JPanel {
         clear.addActionListener(e -> clearForm());
         JButton delete = new JButton("Supprimer");
         delete.addActionListener(e -> deleteSelected());
-        JButton parts = new JButton("Mettre a jour les pieces");
+        JButton parts = new JButton("Mettre à jour les pièces");
         parts.addActionListener(e -> updatePartsCost());
 
         buttons.add(save);
@@ -164,8 +164,8 @@ public class ProductPanel extends JPanel {
                     toMoney(shippingCostField.getValue(), "Frais de port invalides"),
                     LocalDate.parse(purchaseDateField.getText().trim()),
                     diagnosisArea.getText().trim(),
-                    toInt(timeSpentField.getValue(), "Temps passe invalide"),
-                    toMoney(partsCostField.getValue(), "Valeur des pieces invalide"),
+                    toInt(timeSpentField.getValue(), "Temps passé invalide"),
+                    toMoney(partsCostField.getValue(), "Valeur des pièces invalide"),
                     (ProductStatus) statusBox.getSelectedItem(),
                     defaultText(saleChannelField.getText(), "Vinted"),
                     salePriceField.getValue() == null ? null : toMoney(salePriceField.getValue(), "Prix de vente invalide"),
@@ -180,7 +180,7 @@ public class ProductPanel extends JPanel {
                 selectedProduct = product;
             }
             refresh();
-            DialogUtil.showInfo(this, "Produit enregistre");
+            DialogUtil.showInfo(this, "Produit enregistré");
         } catch (Exception ex) {
             DialogUtil.showError(this, ex.getMessage());
         }
@@ -191,7 +191,7 @@ public class ProductPanel extends JPanel {
             DialogUtil.showError(this, "Selectionnez un produit");
             return;
         }
-        if (DialogUtil.confirm(this, "Supprimer ce produit et ses pieces ?")) {
+        if (DialogUtil.confirm(this, "Supprimer ce produit et ses pièces ?")) {
             productRepository.delete(selectedProduct.id());
             selectedProduct = null;
             clearForm();
@@ -264,7 +264,7 @@ public class ProductPanel extends JPanel {
     }
 
     private static final class ProductTableModel extends AbstractTableModel {
-        private final String[] columns = {"ID", "Nom", "Plateforme", "Achat", "Port", "Date", "Statut", "Pieces", "Vente"};
+        private final String[] columns = {"ID", "Nom", "Plateforme", "Achat", "Port", "Date", "Statut", "Pièces", "Vente"};
         private List<Product> rows = List.of();
 
         void setRows(List<Product> rows) {
