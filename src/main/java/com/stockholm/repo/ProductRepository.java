@@ -135,6 +135,68 @@ public class ProductRepository {
         }
     }
 
+    public List<Profitability> profitability() {
+                String sql = """
+                        SELECT id, name,
+                            COALESCE(sale_price, 0) - COALESCE(sale_fee, 0) AS pure_gain,
+                            COALESCE(sale_price, 0) - COALESCE(sale_fee, 0)
+                                - (purchase_price + shipping_cost + parts_cost) AS net_gain,
+                            (purchase_price + shipping_cost + parts_cost) AS total_cost
+                        FROM products
+                        WHERE sale_price IS NOT NULL
+                        ORDER BY net_gain DESC
+                        """;
+                try (Connection connection = databaseManager.openConnection();
+                     Statement statement = connection.createStatement();
+                     ResultSet rs = statement.executeQuery(sql)) {
+                    List<Profitability> result = new ArrayList<>();
+                    while (rs.next()) {
+                        result.add(new Profitability(
+                                rs.getLong("id"),
+                                rs.getString("name"),
+                                rs.getBigDecimal("pure_gain"),
+                                rs.getBigDecimal("net_gain"),
+                                rs.getBigDecimal("total_cost")
+                        ));
+                    }
+                    return result;
+                } catch (SQLException exception) {
+                    throw new IllegalStateException("Impossible de calculer la rentabilité", exception);
+                }
+    }
+
+    public GlobalKpis globalKpis() {
+                String sql = """
+                        SELECT
+                            COUNT(*) AS total_products,
+                            COALESCE(SUM(CASE WHEN sale_price IS NOT NULL
+                                AND sale_price - sale_fee - (purchase_price + shipping_cost + parts_cost) > 0
+                                THEN 1 ELSE 0 END), 0) AS profitable_products,
+                            COALESCE(SUM(purchase_price + shipping_cost + parts_cost), 0) AS invested,
+                            COALESCE(SUM(COALESCE(sale_price, 0) - sale_fee), 0) AS pure_gain,
+                            COALESCE(SUM(CASE WHEN sale_price IS NOT NULL
+                                THEN sale_price - sale_fee - (purchase_price + shipping_cost + parts_cost)
+                                ELSE 0 END), 0) AS net_gain
+                        FROM products
+                        """;
+                try (Connection connection = databaseManager.openConnection();
+                     Statement statement = connection.createStatement();
+                     ResultSet rs = statement.executeQuery(sql)) {
+                    if (rs.next()) {
+                        return new GlobalKpis(
+                                rs.getInt("total_products"),
+                                rs.getInt("profitable_products"),
+                                rs.getBigDecimal("invested"),
+                                rs.getBigDecimal("pure_gain"),
+                                rs.getBigDecimal("net_gain")
+                        );
+                    }
+                    return new GlobalKpis(0, 0, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
+                } catch (SQLException exception) {
+                    throw new IllegalStateException("Impossible de calculer les KPI globaux", exception);
+                }
+    }
+
     private Product map(ResultSet rs) throws SQLException {
         return new Product(
                 rs.getLong("id"),
@@ -176,5 +238,22 @@ public class ProductRepository {
     }
 
     public record FinancialSummary(BigDecimal totalCost, BigDecimal totalRevenue) {
+    }
+
+    public record Profitability(long id, String name, BigDecimal pureGain, BigDecimal netGain, BigDecimal totalCost) {
+    }
+
+    public record GlobalKpis(
+            int totalProducts,
+            int profitableProducts,
+            BigDecimal invested,
+            BigDecimal pureGain,
+            BigDecimal netGain
+    ) {
+        public BigDecimal roiPercent() {
+            return invested.signum() == 0
+                    ? BigDecimal.ZERO
+                    : netGain.multiply(BigDecimal.valueOf(100)).divide(invested, 2, java.math.RoundingMode.HALF_UP);
+        }
     }
 }

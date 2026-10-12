@@ -6,7 +6,10 @@ Application Java desktop Swing avec base SQLite locale pour suivre des produits 
 
 - Ajout, modification et suppression de produits
 - Suivi des pieces detachees liees a chaque produit
-- Tableau de bord avec graphiques des statuts et des couts
+- Stock de batteries avec tension, capacite, format, notes et etat de chaque cellule
+- Tableau de bord avec menu de graphiques : statuts, couts, cellules saines, gains purs,
+  gains nets avec couts, objets rentables, ROI et KPI globaux
+- Roulette flottante avec bille animee, tirage aleatoire et bouton d'ouverture/fermeture
 - Base SQLite creee automatiquement a cote de l'executable
 
 ## Lancement

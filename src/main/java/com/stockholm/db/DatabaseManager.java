@@ -65,6 +65,28 @@ public class DatabaseManager {
                         )
                         """);
                 statement.execute("CREATE INDEX IF NOT EXISTS idx_parts_product_id ON parts(product_id)");
+                statement.execute("""
+                        CREATE TABLE IF NOT EXISTS batteries (
+                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            model TEXT NOT NULL,
+                            cell_count INTEGER NOT NULL CHECK (cell_count > 0),
+                            voltage NUMERIC NOT NULL DEFAULT 0,
+                            capacity_ah NUMERIC NOT NULL DEFAULT 0,
+                            format TEXT NOT NULL DEFAULT '',
+                            notes TEXT NOT NULL DEFAULT ''
+                        )
+                        """);
+                statement.execute("""
+                        CREATE TABLE IF NOT EXISTS battery_cells (
+                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            battery_id INTEGER NOT NULL,
+                            cell_number INTEGER NOT NULL,
+                            state TEXT NOT NULL DEFAULT 'INCONNUE',
+                            UNIQUE (battery_id, cell_number),
+                            FOREIGN KEY(battery_id) REFERENCES batteries(id) ON DELETE CASCADE
+                        )
+                        """);
+                statement.execute("CREATE INDEX IF NOT EXISTS idx_battery_cells_battery_id ON battery_cells(battery_id)");
             }
         } catch (Exception e) {
             throw new IllegalStateException("Unable to initialize database at " + databaseFile, e);
