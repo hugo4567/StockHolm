@@ -66,3 +66,82 @@ tasks.register('packageWindows', Exec) {
             '--description', 'Gestion de produits et de pieces detachees'
     )
 }
+
+tasks.register('packageWindowsZip', Zip) {
+    group = 'distribution'
+    description = 'Build a portable Windows ZIP containing the executable and Java runtime'
+    dependsOn tasks.packageWindows
+    archiveFileName = "StockHolm-${project.version}-windows.zip"
+    destinationDirectory = layout.buildDirectory.dir('distributions')
+    from(windowsAppDirectory) {
+        into 'StockHolm'
+    }
+}
+
+def singleExeDirectory = layout.buildDirectory.dir('single-exe').get().asFile
+def singleExePayload = file("${singleExeDirectory}/StockHolmPayload.zip")
+def singleExeLauncher = file("${singleExeDirectory}/launch.cmd")
+def singleExeSed = file("${singleExeDirectory}/StockHolm.sed")
+def singleExeOutput = file("${layout.buildDirectory.get().asFile}/distributions/StockHolm-1.0.0-portable.exe")
+
+tasks.register('prepareWindowsSingleExe', Copy) {
+    dependsOn tasks.packageWindows
+    from(windowsAppDirectory)
+    into("${singleExeDirectory}/StockHolm")
+}
+
+tasks.register('packageWindowsSingleExe', Exec) {
+    group = 'distribution'
+    description = 'Build one self-extracting Windows executable'
+    dependsOn tasks.prepareWindowsSingleExe
+
+    doFirst {
+        singleExeDirectory.mkdirs()
+        singleExePayload.delete()
+        ant.zip(destfile: singleExePayload, basedir: "${singleExeDirectory}/StockHolm")
+
+        singleExeLauncher.text = '''@echo off
+setlocal
+set "TARGET=%TEMP%\\StockHolm-%RANDOM%-%RANDOM%"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -Command "Expand-Archive -LiteralPath '%~dp0StockHolmPayload.zip' -DestinationPath '%TARGET%' -Force"
+if errorlevel 1 exit /b 1
+start "" "%TARGET%\\StockHolm.exe"
+exit /b 0
+'''
+
+        singleExeSed.text = """[Version]
+Class=IEXPRESS
+SEDVersion=3
+[Options]
+PackagePurpose=InstallApp
+ShowInstallProgramWindow=0
+HideExtractAnimation=1
+UseLongFileName=1
+InsideCompressed=0
+CAB_FixedSize=0
+CAB_ResvCodeSigning=0
+RebootMode=I
+InstallPrompt=
+DisplayLicense=
+FinishMessage=
+TargetName=${singleExeOutput.absolutePath}
+FriendlyName=StockHolm portable
+AppLaunched=launch.cmd
+PostInstallCmd=<None>
+SourceFiles=SourceFiles
+[SourceFiles]
+SourceFiles0=${singleExeDirectory.absolutePath}\\
+[SourceFiles0]
+%FILE0%=StockHolmPayload.zip
+%FILE1%=launch.cmd
+[Strings]
+FILE0="StockHolmPayload.zip"
+FILE1="launch.cmd"
+AppLaunched=launch.cmd
+"""
+        singleExeOutput.parentFile.mkdirs()
+        singleExeOutput.delete()
+    }
+
+    commandLine('iexpress.exe', '/N', '/Q', singleExeSed.absolutePath)
+}

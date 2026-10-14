@@ -27,6 +27,10 @@ public final class AppPaths {
     }
 
     public static Path resolveDatabaseFile() {
+        String localAppData = System.getenv("LOCALAPPDATA");
+        if (localAppData != null && !localAppData.isBlank()) {
+            return Paths.get(localAppData, "StockHolm", "stockholm.db").toAbsolutePath().normalize();
+        }
         return resolveApplicationDirectory().resolve("stockholm.db");
     }
 
