@@ -25,6 +25,13 @@ gradle packageWindowsSingleExe
 
 La base est enregistree dans le meme dossier que l'application lancee, sous le nom `stockholm.db`.
 
+Lors d'un premier lancement avec `gradle run`, un jeu de données de débogage est
+créé automatiquement : produits dans plusieurs statuts, pièces détachées,
+batteries et cellules avec des états variés. Le jeu de données n'est créé que
+si la base est vide et ne remplace jamais les données existantes. Pour repartir
+de cet état, fermez l'application puis supprimez la base locale
+`%LOCALAPPDATA%/StockHolm/stockholm.db` avant de relancer `gradle run`.
+
 `gradle packageWindows` genere une application Windows autonome dans
 `build/jpackage/StockHolm/`. Le fichier executable est
 `build/jpackage/StockHolm/StockHolm.exe`, avec son runtime Java inclus.

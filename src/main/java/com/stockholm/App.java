@@ -1,6 +1,7 @@
 package com.stockholm;
 
 import com.stockholm.db.DatabaseManager;
+import com.stockholm.db.DebugDataSeeder;
 import com.stockholm.ui.MainFrame;
 import com.stockholm.ui.SplashWindow;
 
@@ -23,6 +24,7 @@ public final class App {
                 protected DatabaseManager doInBackground() {
                     DatabaseManager databaseManager = new DatabaseManager();
                     databaseManager.initialize();
+                    new DebugDataSeeder(databaseManager).seedIfEmpty();
                     return databaseManager;
                 }
 
