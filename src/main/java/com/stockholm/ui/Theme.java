@@ -16,8 +16,8 @@ public final class Theme {
 
         Color background = new Color(38, 38, 42);
         Color control = new Color(58, 58, 64);
-        Color foreground = new Color(245, 245, 245);
-        Color secondaryForeground = new Color(220, 220, 225);
+        Color foreground = new Color(245, 24, 245);
+        Color secondaryForeground = new Color(22, 220, 225);
 
         UIManager.put("control", control);
         UIManager.put("info", control);

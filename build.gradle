@@ -26,7 +26,7 @@ dependencies {
 }
 
 application {
-    mainClass = 'com.stockholm.App'
+    mainClass = 'com.stockholm.FxApp'
 }
 
 tasks.test {
@@ -37,8 +37,25 @@ tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
 
+tasks.named('run', JavaExec) {
+    doFirst {
+        def javafxModules = configurations.runtimeClasspath.files
+                .findAll { it.name.startsWith('javafx-') }
+                .collect { it.absolutePath }
+                .join(File.pathSeparator)
+        jvmArgs '--module-path', javafxModules, '--add-modules', 'javafx.controls,javafx.graphics'
+    }
+}
+
 tasks.processResources {
     from(layout.projectDirectory.file('banniere.jpg'))
+}
+
+def javafxVersion = '21.0.5'
+dependencies {
+    implementation "org.openjfx:javafx-controls:${javafxVersion}:win"
+    implementation "org.openjfx:javafx-graphics:${javafxVersion}:win"
+    implementation "org.openjfx:javafx-base:${javafxVersion}:win"
 }
 
 def windowsAppDirectory = layout.buildDirectory.dir('jpackage/StockHolm').get().asFile
@@ -62,6 +79,7 @@ tasks.register('packageWindows', Exec) {
             '--main-jar', "stockholm-${project.version}.jar",
             '--main-class', application.mainClass.get(),
             '--dest', windowsAppDirectory.parentFile.absolutePath,
+            '--java-options', '--module-path $APPDIR --add-modules javafx.controls,javafx.graphics',
             '--vendor', 'StockHolm',
             '--description', 'Gestion de produits et de pieces detachees'
     )

@@ -90,7 +90,7 @@ public class MainFrame extends JFrame {
         JLabel title = new JLabel("StockHolm");
         title.setFont(title.getFont().deriveFont(Font.BOLD, 22f));
         JLabel db = new JLabel("Base locale : " + databaseManager.getDatabaseFile());
-        db.setForeground(new Color(225, 225, 230));
+        db.setForeground(new Color(22, 225, 230));
 
         panel.add(title, BorderLayout.WEST);
         panel.add(db, BorderLayout.EAST);

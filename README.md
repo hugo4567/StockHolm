@@ -1,6 +1,6 @@
 # StockHolm
 
-Application Java desktop Swing avec base SQLite locale pour suivre des produits et leurs pieces detachees. idéale pour gerer de l'achat / revente de produits sur vinted avec réparations.
+Application Java desktop JavaFX avec base SQLite locale pour suivre des produits et leurs pieces detachees. L'interface adopte un style sombre moderne inspire des outils de gestion et de collaboration.
 
 ## Fonctionnalites
 
@@ -10,6 +10,7 @@ Application Java desktop Swing avec base SQLite locale pour suivre des produits 
 - Tableau de bord avec menu de graphiques : statuts, couts, cellules saines, gains purs,
   gains nets avec couts, objets rentables, ROI et KPI globaux
 - Roulette flottante avec bille animee, tirage aleatoire et bouton d'ouverture/fermeture
+- Interface JavaFX moderne avec navigation laterale, cartes KPI et graphiques integres
 - Base SQLite creee automatiquement a cote de l'executable
 
 ## Lancement
